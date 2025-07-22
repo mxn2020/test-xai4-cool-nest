@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { Separator } from '../ui/separator';
-import { LogOut, User, Mail, Calendar, Shield, Home } from 'lucide-react';
+import { LogOut, User, Mail, Calendar, Shield, Home, Stethoscope } from 'lucide-react';
 import { Container } from '../../lib/dev-container';
 
 export const Dashboard: React.FC = () => {
@@ -69,6 +69,12 @@ export const Dashboard: React.FC = () => {
 
   const user = session.user;
 
+  // Mock data for appointments
+  const mockAppointments = [
+    { date: '2024-04-15', time: '10:00 AM', type: 'Cleaning' },
+    { date: '2024-05-20', time: '2:30 PM', type: 'Check-up' }
+  ];
+
   return (
     <Container componentId="dashboard-page">
       <div className="min-h-screen bg-gray-50">
@@ -78,7 +84,7 @@ export const Dashboard: React.FC = () => {
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center">
                   <h1 className="text-xl font-semibold text-gray-900">
-                    Dashboard
+                    Patient Dashboard
                   </h1>
                 </div>
                 <div className="flex items-center gap-2">
@@ -162,12 +168,11 @@ export const Dashboard: React.FC = () => {
                 <div className="md:col-span-2 space-y-6">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Welcome back, {user.name?.split(' ')[0] || 'User'}!</CardTitle>
+                      <CardTitle>Welcome back, {user.name?.split(' ')[0] || 'Patient'}!</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground mb-4">
-                        You're successfully logged in to your account. This is your personal dashboard 
-                        where you can manage your profile and account settings.
+                        You're successfully logged in to your patient portal. Here you can manage your appointments and profile.
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Card>
@@ -176,7 +181,7 @@ export const Dashboard: React.FC = () => {
                               <div className="text-2xl font-bold text-primary">
                                 {Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))}
                               </div>
-                              <p className="text-sm text-muted-foreground">Days as member</p>
+                              <p className="text-sm text-muted-foreground">Days as patient</p>
                             </div>
                           </CardContent>
                         </Card>
@@ -186,10 +191,35 @@ export const Dashboard: React.FC = () => {
                               <div className="text-2xl font-bold text-primary">
                                 Active
                               </div>
-                              <p className="text-sm text-muted-foreground">Session status</p>
+                              <p className="text-sm text-muted-foreground">Account status</p>
                             </div>
                           </CardContent>
                         </Card>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Stethoscope className="h-5 w-5" />
+                        Upcoming Appointments
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {mockAppointments.map((appt, index) => (
+                          <div key={index} className="flex items-center justify-between py-2">
+                            <div className="flex items-center gap-3">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <span className="text-sm">{appt.type} on {appt.date} at {appt.time}</span>
+                            </div>
+                            <Badge variant="outline">Upcoming</Badge>
+                          </div>
+                        ))}
+                        {mockAppointments.length === 0 && (
+                          <p className="text-sm text-muted-foreground text-center">No upcoming appointments</p>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -212,7 +242,7 @@ export const Dashboard: React.FC = () => {
                         <div className="flex items-center justify-between py-2">
                           <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            <span className="text-sm">Profile accessed</span>
+                            <span className="text-sm">Profile viewed</span>
                           </div>
                           <span className="text-sm text-muted-foreground">
                             {new Date().toLocaleTimeString()}
