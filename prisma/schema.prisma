@@ -15,49 +15,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Application data models (not auth-related)
-model Post {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String   // References Better Auth user ID (not a Prisma relation)
-  slug      String   @unique
-  tags      String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  comments  Comment[]
-}
-
-model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  content   String
-  authorId  String   // References Better Auth user ID
-  postId    String   @db.ObjectId
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Category {
+// Application data models for dentist website
+model Appointment {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String   @unique
-  description String?
-  color       String?  @default("#3b82f6")
+  patientId   String   // References Better Auth user ID (not a Prisma relation)
+  date        DateTime
+  treatment   String
+  notes       String?
+  status      String   @default("scheduled") // "scheduled" | "completed" | "cancelled"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-// Example model for user preferences (linked to Better Auth users)
-model UserPreference {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String   @unique // Better Auth user ID
-  theme             String   @default("light") // "light" | "dark" | "system"
-  emailNotifications Boolean  @default(true)
-  language          String   @default("en")
-  timezone          String   @default("UTC")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+model PatientProfile {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @unique // Better Auth user ID
+  dateOfBirth    DateTime?
+  phoneNumber    String?
+  address        String?
+  medicalHistory String?
+  allergies      String[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Treatment {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  duration    Int?     // in minutes
+  cost        Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // Example model for application settings
